@@ -47,103 +47,59 @@ public:
         }
     }
 
-    void merge(std::vector<song>& songs, int L, int R, int Mid, string P) {
-        if(P == "popularity") {
-            int sizeL = Mid - L + 1;
-            int sizeR = R - Mid;
+    vector<song> merge(vector<song>& L, vector<song>& R, string P) {
+        vector<song> result;
+        int i,j;
+        i=0;
+        j=0;
 
-            vector<song> tempA(songs.begin() + L, songs.begin() + Mid + 1);
-            vector<song> tempB(songs.begin() + Mid + 1, songs.begin() + R + 1);
-
-            int i,j,k;
-            i=0;
-            j=0;
-            k=L;
-
-            while(i < sizeL && j < sizeR) {
-                if(tempA[i].popularity > tempB[j].popularity) {
-                    songs[k] = tempA[i];
+        while(i < L.size() && j < R.size()) {
+            if(P == "popularity") {
+                if(L[i].popularity > R[j].popularity) {
+                    result.push_back(L[i]);
                     i++;
                 }
                 else {
-                    songs[k] = tempB[j];
+                    result.push_back(R[j]);
                     j++;
                 }
-                k++;
-            }
-
-            while(i < sizeL) {
-                songs[k] = tempA[i];
-                i++;
-                k++;
-            }
-            while(j < sizeR) {
-                songs[k] = tempB[j];
-                j++;
-                k++;
-            }
-
-        } else if(P == "liveness") {
-            int sizeL = Mid - L + 1;
-            int sizeR = R - Mid;
-
-            vector<song> tempA(songs.begin() + L, songs.begin() + Mid + 1);
-            vector<song> tempB(songs.begin() + Mid + 1, songs.begin() + R + 1);
-
-            int i,j,k;
-            i=0;
-            j=0;
-            k=L;
-
-            while(i < sizeL && j < sizeR) {
-                if(tempA[i].liveness > tempB[j].liveness) {
-                    songs[k] = tempA[i];
+            } else if(P == "liveness") {
+                if(L[i].liveness > R[j].liveness) {
+                    result.push_back(L[i]);
                     i++;
                 }
                 else {
-                    songs[k] = tempB[j];
+                    result.push_back(R[j]);
                     j++;
                 }
-                k++;
             }
-
-            while(i < sizeL) {
-                songs[k] = tempA[i];
-                i++;
-                k++;
-            }
-            while(j < sizeR) {
-                songs[k] = tempB[j];
-                j++;
-                k++;
-            }
-        } else {
-            return;
         }
+
+        while(i < L.size()) {
+            result.push_back(L[i]);
+            i++;
+        }
+        while(j < R.size()) {
+            result.push_back(R[j]);
+            j++;
+        }
+
+        return result;
     }
 
-    void mergeSort(std::vector<song>& songs, int L, int R, string P) {
-        if(P == "popularity") {
-            if(L >= R) {
-                return;
-            }
-            int Mid = L + (R - L) / 2;
-            mergeSort(songs, L, Mid, "popularity");
-            mergeSort(songs, Mid + 1, R, "popularity");
-            merge(songs, L, R, Mid, "popularity");
-
-        } else if(P == "liveness") {
-            if(L >= R) {
-                return;
-            }
-            int Mid = L + (R - L) / 2;
-            mergeSort(songs, L, Mid, "liveness");
-            mergeSort(songs, Mid + 1, R, "liveness");
-            merge(songs, L, R, Mid, "liveness");
-
-        } else {
-            return;
+    vector<song> mergeSort(std::vector<song>& songs, string P) {
+        if(songs.size() <= 1) {
+            return songs;
         }
+
+        int Mid = songs.size() / 2;
+
+        vector<song> L(songs.begin(), songs.begin() + Mid);
+        vector<song> R(songs.begin() + Mid, songs.end());
+
+        vector<song> SL = mergeSort(L,P);
+        vector<song> SR = mergeSort(R,P);
+        return merge(SL, SR, P);
     }
 
 
