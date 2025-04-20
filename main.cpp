@@ -29,7 +29,7 @@ int main() {
 
     // get genre from user
     while(true) {
-        if (genre == "\n") {
+        if (genre == "") {
             break;
         } else if(genre == "list") {
             for(auto it = availableGenres.begin(); it != availableGenres.end(); it++) {
@@ -68,7 +68,7 @@ int main() {
 
     std::cout<<"Top " << numberOfQueriedSongs << " songs ";
 
-    if (genre != "\n") {
+    if (genre != "") {
         std::cout<<"in the "<< genre<<" genre ";
     }
 
@@ -84,6 +84,30 @@ int main() {
     std::cout<<"sorted by "<<sortParameter<<std::endl;
 
     // call sort functions here
+
+    std::vector<song> results;
+    std::chrono::duration<double> quicksortTime;
+    std::chrono::duration<double> mergesortTime;
+
+    if (sortParameter == "popularity") {
+        auto start = std::chrono::high_resolution_clock::now();
+        results = musicData.quick_sort_by_popularity(numberOfQueriedSongs);
+        auto end = std::chrono::high_resolution_clock::now();
+        quicksortTime = end - start;
+
+    } else if(sortParameter == "liveness") {
+        auto start = std::chrono::high_resolution_clock::now();
+        results = musicData.quick_sort_by_liveness(numberOfQueriedSongs);
+        auto end = std::chrono::high_resolution_clock::now();
+        quicksortTime = end - start;
+    }
+
+    std::cout<<"Quick Sort time: "<<quicksortTime.count()<<"seconds"<<std::endl;
+
+    for (int i = 0; i < results.size(); i++) {
+        std::cout<<i<<". ";
+        std::cout<<results[i].trackName<<std::endl;
+    }
 }
 
 
