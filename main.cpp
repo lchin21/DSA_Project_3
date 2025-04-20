@@ -85,15 +85,21 @@ int main() {
 
     // call sort functions here
 
-    std::vector<song> results;
+    std::vector<song> quickResults;
+    std::vector<song> mergeResults;
     std::chrono::duration<double> quicksortTime;
     std::chrono::duration<double> mergesortTime;
 
     if (sortParameter == "popularity") {
         auto start = std::chrono::high_resolution_clock::now();
-        results = musicData.quick_sort_by_popularity(numberOfQueriedSongs);
+        quickResults = musicData.quick_sort_by_popularity(numberOfQueriedSongs);
         auto end = std::chrono::high_resolution_clock::now();
         quicksortTime = end - start;
+
+        start = std::chrono::high_resolution_clock::now();
+        mergeResults = musicData.mergeSort(constrainedSongs, 0, constrainedSongs.size() - 1, sortParameter);
+        end = std::chrono::high_resolution_clock::now();
+        mergesortTime = end - start;
 
     } else if(sortParameter == "liveness") {
         auto start = std::chrono::high_resolution_clock::now();
