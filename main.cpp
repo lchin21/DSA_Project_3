@@ -44,8 +44,21 @@ int main() {
         std::getline(std::cin, genre);
     }
 
-    std::cout<<"Do you want to sort by popularity or liveness?"<<std::endl;
+    // get songs that fit constraints provided by user
+    std::vector<song> constrainedSongs;
+    if(genre != "") {
+        for(song song : musicData.data) {
+            if(song.trackGenre == genre) {
+                constrainedSongs.push_back(song);
 
+            }
+        }
+    } else {
+        constrainedSongs = musicData.data;
+    }
+
+    // get sort parameter from user
+    std::cout<<"Do you want to sort by popularity or liveness?"<<std::endl;
     while(true) {
         std::getline(std::cin, sortParameter);
         if (sortParameter == "popularity" || sortParameter == "liveness") {
@@ -55,6 +68,7 @@ int main() {
         }
     }
 
+    // get number of songs to return
     while(true) {
         std::cout<<"How many songs do you want?"<<std::endl;
         std::string temp;
@@ -65,26 +79,9 @@ int main() {
         }
         std::cout<<"Enter an integer greater than 0."<<std::endl;
     }
-
-    std::cout<<"Top " << numberOfQueriedSongs << " songs ";
-
-    if (genre != "") {
-        std::cout<<"in the "<< genre<<" genre ";
-    }
-
-    std::vector<song> constrainedSongs;
-    if(genre != "\n") {
-        for(song song : musicData.data) {
-            if(song.trackGenre == genre) {
-                constrainedSongs.push_back(song);
-            }
-        }
-    }
-
-    std::cout<<"sorted by "<<sortParameter<<std::endl;
+    std::cout<<"loading..."<<std::endl;
 
     // call sort functions here
-
     std::vector<song> quickResults;
     std::vector<song> mergeResults;
     std::chrono::duration<double> quicksortTime;
@@ -97,22 +94,55 @@ int main() {
         quicksortTime = end - start;
 
         start = std::chrono::high_resolution_clock::now();
-        mergeResults = musicData.mergeSort(constrainedSongs, 0, constrainedSongs.size() - 1, sortParameter);
+        mergeResults = musicData.mergeSort(constrainedSongs, sortParameter);
         end = std::chrono::high_resolution_clock::now();
         mergesortTime = end - start;
 
     } else if(sortParameter == "liveness") {
         auto start = std::chrono::high_resolution_clock::now();
-        results = musicData.quick_sort_by_liveness(numberOfQueriedSongs);
+        quickResults = musicData.quick_sort_by_liveness(numberOfQueriedSongs);
         auto end = std::chrono::high_resolution_clock::now();
         quicksortTime = end - start;
+
+        start = std::chrono::high_resolution_clock::now();
+        mergeResults = musicData.mergeSort(constrainedSongs, sortParameter);
+        end = std::chrono::high_resolution_clock::now();
+        mergesortTime = end - start;
     }
 
-    std::cout<<"Quick Sort time: "<<quicksortTime.count()<<"seconds"<<std::endl;
+    std::cout<<"Top " << numberOfQueriedSongs << " songs ";
 
-    for (int i = 0; i < results.size(); i++) {
-        std::cout<<i<<". ";
-        std::cout<<results[i].trackName<<std::endl;
+    if (genre != "") {
+        std::cout<<"in the "<< genre<<" genre ";
+    }
+
+    std::cout<<"sorted by "<<sortParameter<<std::endl;
+
+    std::cout<<"Quick Sort time: "<<quicksortTime.count()<<"seconds"<<std::endl;
+    std::cout<<"Merge Sort time: "<<mergesortTime.count()<<"seconds"<<std::endl;
+
+    std::cout<<"Quick Sort Results" << std::endl;
+    for (int i = 0; i < quickResults.size(); i++) {
+        std::cout<<i + 1<<". ";
+        std::cout<<quickResults[i].trackName;
+
+        if(sortParameter == "popularity") {
+            std::cout<<"Popularity: "<< quickResults[i].popularity<<std::endl;
+        } else if(sortParameter == "liveness") {
+            std::cout<<"Liveness: "<< quickResults[i].liveness<<std::endl;
+        }
+    }
+
+    std::cout<<"Merge Sort Results"<<std::endl;
+    for (int i = 0; i < numberOfQueriedSongs; i++) {
+        std::cout<<i + 1<<". ";
+        std::cout<<quickResults[i].trackName;
+
+        if(sortParameter == "popularity") {
+            std::cout<<"Popularity: "<< mergeResults[i].popularity<<std::endl;
+        } else if(sortParameter == "liveness") {
+            std::cout<<"Liveness: "<< mergeResults[i].liveness<<std::endl;
+        }
     }
 }
 
