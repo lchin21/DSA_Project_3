@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "csv.h"
+using namespace std; 
 
 #ifndef MUSICDATA_H
 #define MUSICDATA_H
