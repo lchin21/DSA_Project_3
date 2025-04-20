@@ -12,19 +12,19 @@
 
 struct song {
     std::string artistName;
-    float artistLongitude;
-    float artistLatitude;
-    float loudness;
-    int releaseYear;
-    std::string terms;
+    std::string trackName;
+    std::string trackGenre;
+    float popularity;
+    float danceability;
+    float liveness;
 
-    song(std::string name, float longitude, float latitude, float loudness, int releaseYear, std::string terms) {
-        artistName = name;
-        artistLongitude = longitude;
-        artistLatitude = latitude;
-        this->loudness = loudness;
-        this->releaseYear = releaseYear;
-        this->terms = terms;
+    song(std::string artistName, std::string trackName, std::string trackGenre, float popularity, float danceability, float liveness) {
+        this->artistName = artistName;
+        this->trackName = trackName;
+        this->trackGenre = trackGenre;
+        this->popularity = popularity;
+        this->danceability = danceability;
+        this->liveness = liveness;
     }
 };
 
@@ -35,14 +35,14 @@ public:
     MusicData() {
         csv::CSVReader reader("music.csv");
         for (csv::CSVRow& row : reader) {
-            std::string artistName = row["artist.name"].get<>();
-            float artistLongitude = row["artist.longitude"].get<float>();
-            float artistLatitude = row["artist.latitude"].get<float>();
-            float loudness = row["song.loudness"].get<float>();
-            int releaseYear = row["song.year"].get<int>();
-            std::string terms = row["artist.terms"].get<>();
+            std::string artistName = row["artists"].get<>();
+            std::string trackName = row["track_name"].get<>();
+            std::string trackGenre = row["track_genre"].get<>();
+            float popularity = row["popularity"].get<float>();
+            float danceability = row["danceability"].get<float>();
+            float liveness = row["liveness"].get<float>();
 
-            data.emplace_back(artistName, artistLongitude, artistLatitude, loudness, releaseYear, terms);
+            data.emplace_back(artistName, trackName, trackGenre, popularity, danceability, liveness);
         }
     }
 
