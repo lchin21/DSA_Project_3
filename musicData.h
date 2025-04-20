@@ -130,7 +130,7 @@ public:
             int Mid = L + (R - L) / 2;
             mergeSort(songs, L, Mid, "popularity");
             mergeSort(songs, Mid + 1, R, "popularity");
-            merge(songs, L, Mid, R);
+            merge(songs, L, R, Mid, "popularity");
 
         } else if(P == "liveness") {
             if(L >= R) {
@@ -139,12 +139,13 @@ public:
             int Mid = L + (R - L) / 2;
             mergeSort(songs, L, Mid, "liveness");
             mergeSort(songs, Mid + 1, R, "liveness");
-            merge(songs, L, Mid, R);
+            merge(songs, L, R, Mid, "liveness");
 
         } else {
             return;
         }
     }
+
 
 };
 
