@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_set>
-#include <chrono>
+#include <chrono> //for timiing purposes
 #ifdef _WIN32
   #include <windows.h>
 #endif
@@ -9,7 +9,8 @@
 
 int main() {
 #ifdef _WIN32
-    // enable UTF-8 output on Windows console
+    //enable UTF-8 output on Windows console
+    //this gets rid of the wonky characters that were outputted
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 #endif
@@ -20,6 +21,7 @@ int main() {
     std::string sortOrder;
     int numberOfQueriedSongs;
 
+    //lists genres availble to sort by
     std::unordered_set<std::string> availableGenres = {
         "world-music","turkish","trance","synth-pop","swedish",
         "songwriter","ska","singer-songwriter","show-tunes","sertanejo","sad","romance","rockabilly",
@@ -36,6 +38,7 @@ int main() {
         "chicago-house","hip-hop","punk","honky-tonk","house","industrial","indian"
     };
 
+    //accepts user input for genre to create the filtered list
     std::cout << "Welcome to the Song Sort-Scovery\n";
     std::cout << "Enter a Genre. To skip, press enter, to see a list of available genres, enter \"list\"\n";
     std::getline(std::cin, genre);
@@ -50,6 +53,7 @@ int main() {
         std::getline(std::cin, genre);
     }
 
+    //creates genre filtered vector of songs
     std::vector<song> constrainedSongs;
     if (!genre.empty()) {
         for (auto &s : musicData.data)
@@ -59,6 +63,8 @@ int main() {
         constrainedSongs = musicData.data;
     }
 
+    //accepts user input for sorting parameter
+    //prompts again if invalid parameter is chosen
     std::cout << "Sort by popularity, danceability, liveness or duration?\n";
     while (true) {
         std::getline(std::cin, sortParameter);
@@ -68,7 +74,7 @@ int main() {
          || sortParameter == "duration") break;
         std::cout << "Invalid. Choose: popularity, danceability, liveness, duration.\n";
     }
-
+    //accepts user input for sorting by top or lowest of parameter
     std::cout << "Sort by \"most\" or \"least\" " << sortParameter << "?\n";
     while (true) {
         std::getline(std::cin, sortOrder);
@@ -76,6 +82,7 @@ int main() {
         std::cout << "Invalid. Enter \"most\" or \"least\":\n";
     }
 
+    //accepts user input for how many songs a user wants to list
     std::cout << "How many songs do you want?\n";
     while (true) {
         std::string tmp;
@@ -85,11 +92,12 @@ int main() {
         std::cout << "Enter an integer greater than 0.\n";
     }
 
+    //loading message to let the user know the program is working in the background
     std::cout << "\nloading...\n\n";
     std::vector<song> quickResults, mergeResults;
     std::chrono::duration<double> qt, mt;
 
-    // Quick Sort on filtered subset
+    //Quick Sort on filtered songs
     {
         auto t0 = std::chrono::high_resolution_clock::now();
         if (sortOrder == "most") {
@@ -113,7 +121,7 @@ int main() {
         qt = std::chrono::high_resolution_clock::now() - t0;
     }
 
-    // Merge Sort on filtered subset
+    //Merge Sort on filtered songs
     {
         auto t0 = std::chrono::high_resolution_clock::now();
         auto fullMerge = musicData.mergeSort(constrainedSongs, sortParameter);
@@ -131,13 +139,16 @@ int main() {
         mt = std::chrono::high_resolution_clock::now() - t0;
     }
 
+    //formats the output to tell the user what exact parameters they chose for their sort
     std::cout << "Top " << numberOfQueriedSongs
               << (genre.empty() ? " songs " : " songs in the \"" + genre + "\" genre ")
               << sortOrder << " " << sortParameter << "\n\n";
 
+    //calcualtes the timing of both sorts to compare them through the chronnos library
     std::cout << "Quick Sort time: " << qt.count() << " seconds\n";
     std::cout << "Merge Sort time: " << mt.count() << " seconds\n\n";
 
+    //gives the results of the quick sorted vector
     std::cout << "Quick Sort Results\n";
     for (int i = 0; i < (int)quickResults.size(); ++i) {
         auto &s = quickResults[i];
@@ -148,7 +159,7 @@ int main() {
         else if (sortParameter == "liveness")     std::cout << "Liveness: " << s.liveness << "\n";
         else /* duration */                        std::cout << "Duration: " << s.duration_ms << " ms\n";
     }
-
+    //gives the results of the merge sorted vector
     std::cout << "\nMerge Sort Results\n";
     for (int i = 0; i < numberOfQueriedSongs; ++i) {
         auto &s = mergeResults[i];
