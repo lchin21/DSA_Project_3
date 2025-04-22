@@ -106,30 +106,30 @@ public:
     }
 
 private:
-    vector<song> merge(vector<song>& L, vector<song>& R, string& P) {
-        vector<song> result;
+    vector<song> merge(vector<song>& L, vector<song>& R, string& P) {                    //Merge helper function for Merge Sort
+        vector<song> result;                                                             //Stores the result merged vector
         int i = 0, j = 0;
-        while (i < (int)L.size() && j < (int)R.size()) {
-            if (P == "popularity") {
-                if (L[i].popularity   > R[j].popularity)   result.push_back(L[i++]);
+        while (i < (int)L.size() && j < (int)R.size()) {                                 //
+            if (P == "popularity") {                                                     //If sorting by popularity, 
+                if (L[i].popularity   > R[j].popularity)   result.push_back(L[i++]);     //Sort by popularity in descending order
                 else                                     result.push_back(R[j++]);
             }
             else if (P == "danceability") {
-                if (L[i].danceability > R[j].danceability) result.push_back(L[i++]);
+                if (L[i].danceability > R[j].danceability) result.push_back(L[i++]);     //If sorting by danceability,
+                else                                     result.push_back(R[j++]);       //Sort by danceability in descending order
+            }
+            else if (P == "liveness") {                                                  //If soring by liveness
+                if (L[i].liveness     > R[j].liveness)     result.push_back(L[i++]);     //Sort by liveness in descending order
                 else                                     result.push_back(R[j++]);
             }
-            else if (P == "liveness") {
-                if (L[i].liveness     > R[j].liveness)     result.push_back(L[i++]);
-                else                                     result.push_back(R[j++]);
-            }
-            else if (P == "duration") {
-                if (L[i].duration_ms   > R[j].duration_ms) result.push_back(L[i++]);
+            else if (P == "duration") {                                                  //IF soring by duration 
+                if (L[i].duration_ms   > R[j].duration_ms) result.push_back(L[i++]);     //Sort by duration in descending order
                 else                                     result.push_back(R[j++]);
             }
         }
-        while (i < (int)L.size()) result.push_back(L[i++]);
-        while (j < (int)R.size()) result.push_back(R[j++]);
-        return result;
+        while (i < (int)L.size()) result.push_back(L[i++]);                              //Add the remaining elements from vector L 
+        while (j < (int)R.size()) result.push_back(R[j++]);                              //Add the remaining elements from vector R 
+        return result;                                                                   //Return sorted and merged vector
     }
 
 
