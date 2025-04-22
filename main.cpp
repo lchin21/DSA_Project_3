@@ -2,9 +2,18 @@
 #include <vector>
 #include <unordered_set>
 #include <chrono>
+#ifdef _WIN32
+  #include <windows.h>
+#endif
 #include "musicData.h"
 
 int main() {
+#ifdef _WIN32
+    // enable UTF-8 output on Windows console
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif
+
     MusicData musicData;
     std::string genre;
     std::string sortParameter;
@@ -34,13 +43,12 @@ int main() {
         if (genre.empty()) break;
         if (genre == "list") {
             for (auto &g : availableGenres) std::cout << g << "\n";
-            std::cout << "Enter a Genre… or \"list\" again:\n";
+            std::cout << "Enter a Genre or \"list\" again:\n";
         } else if (!availableGenres.count(genre)) {
             std::cout << "Genre does not exist. Try again or press enter to skip:\n";
         } else break;
         std::getline(std::cin, genre);
     }
-
 
     std::vector<song> constrainedSongs;
     if (!genre.empty()) {
@@ -50,7 +58,6 @@ int main() {
     } else {
         constrainedSongs = musicData.data;
     }
-
 
     std::cout << "Sort by popularity, danceability, liveness or duration?\n";
     while (true) {
@@ -62,15 +69,12 @@ int main() {
         std::cout << "Invalid. Choose: popularity, danceability, liveness, duration.\n";
     }
 
-
-    std::cout << "Sort by most or the least " << sortParameter << "?\n";
-    std::cout << "Note: Selecting most prints the highest values of your sorting choice first\n";
+    std::cout << "Sort by \"most\" or \"least\" " << sortParameter << "?\n";
     while (true) {
         std::getline(std::cin, sortOrder);
         if (sortOrder == "most" || sortOrder == "least") break;
         std::cout << "Invalid. Enter \"most\" or \"least\":\n";
     }
-
 
     std::cout << "How many songs do you want?\n";
     while (true) {
@@ -85,7 +89,7 @@ int main() {
     std::vector<song> quickResults, mergeResults;
     std::chrono::duration<double> qt, mt;
 
-
+    // Quick Sort on filtered subset
     {
         auto t0 = std::chrono::high_resolution_clock::now();
         if (sortOrder == "most") {
@@ -109,7 +113,7 @@ int main() {
         qt = std::chrono::high_resolution_clock::now() - t0;
     }
 
-
+    // Merge Sort on filtered subset
     {
         auto t0 = std::chrono::high_resolution_clock::now();
         auto fullMerge = musicData.mergeSort(constrainedSongs, sortParameter);
@@ -127,7 +131,6 @@ int main() {
         mt = std::chrono::high_resolution_clock::now() - t0;
     }
 
-
     std::cout << "Top " << numberOfQueriedSongs
               << (genre.empty() ? " songs " : " songs in the \"" + genre + "\" genre ")
               << sortOrder << " " << sortParameter << "\n\n";
@@ -135,7 +138,6 @@ int main() {
     std::cout << "Quick Sort time: " << qt.count() << " seconds\n";
     std::cout << "Merge Sort time: " << mt.count() << " seconds\n\n";
 
-    //Quick Sort Results
     std::cout << "Quick Sort Results\n";
     for (int i = 0; i < (int)quickResults.size(); ++i) {
         auto &s = quickResults[i];
@@ -147,7 +149,6 @@ int main() {
         else /* duration */                        std::cout << "Duration: " << s.duration_ms << " ms\n";
     }
 
-    //Merge Sort Results
     std::cout << "\nMerge Sort Results\n";
     for (int i = 0; i < numberOfQueriedSongs; ++i) {
         auto &s = mergeResults[i];
