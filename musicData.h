@@ -82,14 +82,14 @@ public:
         return arr;
     }
 
-    vector<song> mergeSort(std::vector<song>& songs, string& P) {
-        if (songs.size() <= 1) return songs;
-        int Mid = songs.size() / 2;
-        vector<song> L(songs.begin(), songs.begin() + Mid);
+    vector<song> mergeSort(std::vector<song>& songs, string& P) {    //Merge Sort function. P = the parameter by which the data is sorted (eg. popularity)
+        if (songs.size() <= 1) return songs;                         //Returns the already sorted vector if it is 1 or less items
+        int Mid = songs.size() / 2;                                  //Vector midpoint
+        vector<song> L(songs.begin(), songs.begin() + Mid);          //Divide the vector into 2, left and right
         vector<song> R(songs.begin() + Mid, songs.end());
-        auto SL = mergeSort(L, P);
+        auto SL = mergeSort(L, P);                                   //Recursion to sort both halves, keeps splitting
         auto SR = mergeSort(R, P);
-        return merge(SL, SR, P);
+        return merge(SL, SR, P);                                     //Merges the halves once they are sorted 
     }
 
     vector<song> quick_sort_subset(const vector<song>& subset,
