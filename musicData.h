@@ -13,13 +13,13 @@ using namespace std;
 struct song {
     song() = default;
 
-    std::string artistName;
-    std::string trackName;
-    std::string trackGenre;
-    float popularity;
-    float duration_ms;
-    float danceability;
-    float liveness;
+    std::string artistName;   //artist of the song
+    std::string trackName;    //title of the track
+    std::string trackGenre;   //genre label
+    float popularity;         //popularity metric (0–100)
+    float duration_ms;        //track length in milliseconds
+    float danceability;       //danceability score (0.0–1.0)
+    float liveness;           //liveness score (0.0–1.0)
 
     song(const std::string &artistName,
          const std::string &trackName,
@@ -56,12 +56,13 @@ public:
             );
         }
     }
-
+    //each quick sort functions works the exact same
+    //public: perform quick sort on full data by popularity, return top N
     std::vector<song> quick_sort_by_popularity(int N) {
-        auto arr = data;
-        quick_sort_popularity(arr.begin(), arr.end());
-        if ((int)arr.size() > N) arr.resize(N);
-        return arr;
+        auto arr = data;                                   //copy data to avoid mutation
+        quick_sort_popularity(arr.begin(), arr.end());         //sort in-place by popularity
+        if ((int)arr.size() > N) arr.resize(N);                         //truncate to N
+        return arr;                                                     //return sorted subset
     }
     std::vector<song> quick_sort_by_danceability(int N) {
         auto arr = data;
@@ -91,7 +92,8 @@ public:
         auto SR = mergeSort(R, P);
         return merge(SL, SR, P);                                     //Merges the halves once they are sorted 
     }
-
+    //quick sort on arbitrary subset by chosen parameter
+    //added to fix issue with quicksort only sorting through unfiltered genre
     vector<song> quick_sort_subset(const vector<song>& subset,
                                const string& P,
                                int N)
@@ -132,14 +134,16 @@ private:
         return result;
     }
 
-
+    //once again the other quick sort functions work exactly the same
+    //private template: quick sort by popularity using AnyData iterators
     template<typename AnyData>
     void quick_sort_popularity(AnyData first, AnyData last) {
-        if (last - first < 2) return;
-        auto midIt    = first + (last - first)/2;
-        song pivot    = *first;
-        song midElem  = *midIt;
-        song lastElem = *(last - 1);
+        if (last - first < 2) return;                               //base case: 0 or 1 element
+        auto midIt = first + (last - first) / 2;                    //middle iterator
+        song pivot = *first;                                        //initial pivot
+        song midElem = *midIt;                                      //middle element
+        song lastElem = *(last - 1);                                //last element
+        //median-of-three pivot selection
         if (first->popularity > midElem.popularity) {
             if (midElem.popularity > lastElem.popularity) pivot = midElem;
             else if (first->popularity > lastElem.popularity) pivot = lastElem;
@@ -148,14 +152,15 @@ private:
             else if (midElem.popularity > lastElem.popularity) pivot = lastElem;
             else pivot = midElem;
         }
+        //partition
         AnyData left = first, right = last - 1;
         while (left <= right) {
             while (left->popularity > pivot.popularity) ++left;
             while (pivot.popularity > right->popularity) --right;
             if (left <= right) { std::iter_swap(left, right); ++left; --right; }
         }
-        quick_sort_popularity(first, right + 1);
-        quick_sort_popularity(left, last);
+        quick_sort_popularity(first, right + 1);                    //recurse left
+        quick_sort_popularity(left, last);                          //recurse right
     }
 
 
