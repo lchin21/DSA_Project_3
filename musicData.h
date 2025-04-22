@@ -21,7 +21,7 @@ struct song {
     float danceability;       //danceability score (0.0–1.0)
     float liveness;           //liveness score (0.0–1.0)
 
-    song(const std::string &artistName,
+    song(const std::string &artistName,        //Song constructor
          const std::string &trackName,
          const std::string &trackGenre,
          float popularity,
@@ -40,11 +40,11 @@ struct song {
 
 class MusicData {
 public:
-    std::vector<song> data;
+    std::vector<song> data;                       //Vector of all songs 
 
-    MusicData() {
+    MusicData() {                                 //Music data constructor 
         csv::CSVReader reader("music.csv");
-        for (csv::CSVRow &row: reader) {
+        for (csv::CSVRow &row: reader) {          //Reads in every row from the CSV and adds the appropriate info to data
             data.emplace_back(
                 row["artists"].get<>(),
                 row["track_name"].get<>(),
